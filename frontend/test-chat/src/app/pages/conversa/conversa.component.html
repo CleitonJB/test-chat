@@ -1,0 +1,19 @@
+<p>conversa works!</p>
+
+<form [formGroup]="conversaForm" (ngSubmit)="onSubmit()">
+    <label for="mensagem">Mensagem</label>
+    <input type="text" formControlName="mensagem">
+
+    <button>Enviar</button>
+</form>
+
+<div class="message__content" *ngFor="let message of messages">
+    <div class="header">
+        <span> {{ message.userName }} </span>
+        <span> {{ message.createdAt }} </span>
+    </div>
+
+    <div class="content">
+        {{ message.content }}
+    </div>
+</div>

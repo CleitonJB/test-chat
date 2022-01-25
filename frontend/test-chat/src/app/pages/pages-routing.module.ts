@@ -14,6 +14,10 @@ const routes: Routes = [
   {
     path: 'menu',
     loadChildren: () => import('./menu/menu.module').then(m => m.MenuModule)
+  },
+  {
+    path: 'conversa/:id',
+    loadChildren: () => import('./conversa/conversa.module').then(m => m.ConversaModule)
   }
 ];
 
