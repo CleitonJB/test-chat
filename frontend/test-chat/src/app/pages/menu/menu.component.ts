@@ -35,13 +35,12 @@ export class MenuComponent implements OnInit {
   public enterGroup(groupId: string): void {
     this.loginService.getCurrentUser().subscribe(
       currentUser => {
-        debugger
         const currentGroup = this.menuService.getGroupByID(groupId);
         const model: UserInfo = new UserInfo(currentGroup.name, currentUser.userName);
 
         this.conversaService.enterGroup(model).then(
           response => {
-            debugger
+  
             if(response) {
               this.conversaService.receiveMessages();
               this.navigateToConversa(groupId);

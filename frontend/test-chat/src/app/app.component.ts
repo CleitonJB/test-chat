@@ -9,6 +9,7 @@ import { LoginService } from './pages/login/login.service';
 })
 export class AppComponent implements OnInit {
   title = 'test-chat';
+  public user: any;
 
   constructor(
     private loginService: LoginService
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
       this.loginService.getCurrentUser().subscribe(
         (userData: any) => {
+          this.user = userData;
           console.log(userData);
         }
       );

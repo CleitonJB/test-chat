@@ -60,19 +60,20 @@ export class ConversaService {
 
   public receiveMessages(): void {
     this.hubConnection?.on('ReceiveMessages', data => {
+      console.log("Nova mensagem (Evento): ", data);
       var messages = this.message.value;
       messages.push(data);
       this.message.next(messages);
     });
   }
 
-  public sendMessage(message: Message): void {
-    const model: UserInfo = this.userInfo.value;
-    if(!model) {
-      throw "Erro de argumento";
-    }
+  public sendMessage(messageData: Message & UserInfo): void {
+    // const model: UserInfo = this.userInfo.value;
+    // if(!model) {
+    //   throw "Erro de argumento";
+    // }
 
-    this.hubConnection?.invoke('SendMessage', model.groupName, model.userName, message.content, message.type);
+    this.hubConnection?.invoke('SendMessage', messageData.groupName, messageData.userName, messageData.content, messageData.type);
   }
 
   public sendMessagePrivate(message: Message): void {

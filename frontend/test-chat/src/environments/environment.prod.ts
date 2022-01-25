@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  urlBase: "https://localhost:44363/"
+  urlBase: "https://vcmobile.com.br/vchatapi/" //"https://localhost:46302/"
 };
