@@ -26,8 +26,8 @@ export class LoginComponent implements OnInit {
 
   private setInitialForm(): void {
     this.loginForm = new FormGroup({
-      nome:  new FormControl(null),
-      senha: new FormControl(null)
+      userName:     new FormControl(null),
+      userPassword: new FormControl(null)
     });
   }
 

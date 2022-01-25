@@ -24,4 +24,8 @@ export class MenuService {
   public getGroups(): any[] {
     return this.groups;
   }
+
+  public getGroupByID(groupId: string) {
+    return this.groups.find(group => group.id == groupId);
+  }
 }

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
+
 import { MenuService } from '../menu/menu.service';
+import { ConversaService } from './conversa.service';
+import { Message } from 'src/app/models/message';
 
 @Component({
   selector: 'app-conversa',
@@ -17,7 +20,8 @@ export class ConversaComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private conversaService: ConversaService
   ) {
     this.conversaForm = new FormGroup({});
     this.messages = [];
@@ -31,9 +35,9 @@ export class ConversaComponent implements OnInit {
 
   private setInitialForm(): void {
     this.conversaForm = new FormGroup({
-      usuario:   new FormControl(null),
+      userName:   new FormControl(null),
       grupoNome: new FormControl(null),
-      mensagem:  new FormControl(null),
+      content:  new FormControl(null),
     });
   }
 
@@ -55,7 +59,11 @@ export class ConversaComponent implements OnInit {
   }
 
   private getMessages(): void {
-    this.messages = [];
+    this.conversaService.getMessage().subscribe(
+      (messages: Message[]) => {
+        this.messages = messages;
+      }
+    );
   }
 
   public onSubmit(): void {
