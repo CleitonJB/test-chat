@@ -1,5 +1,15 @@
 <p>menu works!</p>
 
+<form [formGroup]="privateMessageForm" (ngSubmit)="sendPrivateMessage()">
+    <label for="toUserId">To User ID: </label>
+    <input type="text" formControlName="toUserId">
+    <br>
+    <label for="content">Mensagem: </label>
+    <input type="text" formControlName="content">
+    <br>
+    <button>Enviar</button>
+</form>
+
 <div class="group__content" (click)="enterGroup(group.id)" *ngFor="let group of groups">
     <span> {{ group.name }} </span>
 </div>

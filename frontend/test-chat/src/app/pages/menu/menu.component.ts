@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { EMessageType } from 'src/app/models/message';
 import { UserInfo } from 'src/app/models/user-info';
 import { ConversaService } from '../conversa/conversa.service';
 import { LoginService } from '../login/login.service';
@@ -15,6 +17,8 @@ export class MenuComponent implements OnInit {
 
   public groups: any[];
 
+  public privateMessageForm: FormGroup;
+
   constructor(
     private router: Router,
     private menuService: MenuService,
@@ -22,14 +26,48 @@ export class MenuComponent implements OnInit {
     private conversaService: ConversaService
   ) { 
     this.groups = [];
+    this.privateMessageForm = new FormGroup({});
   }
 
   ngOnInit(): void {
+    this.conversaService.setUserConnection();
     this.getGroups();
+    this.setInitialForm();
+    this.getPrivateMessages();
+    this.getNotifications();
+  }
+
+  private getPrivateMessages(): void {
+    this.conversaService.receivePrivateMessages();
+  }
+
+  private getNotifications(): void {
+    this.conversaService.getNotification();
   }
 
   private getGroups(): void {
     this.groups = this.menuService.getGroups();
+  }
+
+  private setInitialForm(): void {
+    this.privateMessageForm = new FormGroup({
+      userName:  new FormControl(null),
+      toUserId:  new FormControl(null),
+      content:   new FormControl(null),
+      type:      new FormControl(EMessageType.Text),
+    });
+  }
+
+  public sendPrivateMessage(): void {
+    this.conversaService.getUserInfo().subscribe(
+      (userInfo: UserInfo) => {
+        this.privateMessageForm.controls['userName'].setValue(userInfo.userName);
+
+        this.conversaService.sendMessagePrivate(this.privateMessageForm.value);
+      }, error => {
+        console.error(error);
+      }
+    );
   }
 
   public enterGroup(groupId: string): void {

@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { Message } from 'src/app/models/message';
 import { UserInfo } from 'src/app/models/user-info';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoginService } from '../login/login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,11 +22,21 @@ export class ConversaService {
 
   private userInfo: BehaviorSubject<UserInfo>;
 
-  constructor() {
+  private user: any;
+
+  constructor(
+    private loginService: LoginService
+  ) {
     this.hubConnection = this.initConnection();
     this.message = new BehaviorSubject<Message[]>([]);
     this.$messages = this.message.asObservable();
     this.userInfo = new BehaviorSubject<UserInfo>(new UserInfo('', ''));
+    
+    this.loginService.getCurrentUser().subscribe(
+      currentUser => {
+        this.user = currentUser;
+      }
+    );
   }
 
   private initConnection(): HubConnection {
@@ -40,6 +51,28 @@ export class ConversaService {
 
   public getMessage(): Observable<Message[]> {
     return this.$messages;
+  }
+  //!
+  public setUserConnection(): void {
+    this.hubConnection.start();
+    // this.hubConnection.start().then(
+    //   async () => {
+    //     await this.hubConnection.invoke('SetUserConnection').then(data => {
+    //       console.log("Conexão: ", data);
+    //     });
+    //   }
+    // );
+  }
+  //!
+  public getNotification(): void {
+    this.hubConnection.on('Notify', data => {
+      console.warn('Notificação: ', data);
+      //! Já avisei que vai dar B.O., 06
+      if(data.label == "userId" && !this.user.userId) {
+        this.user.userId = data.userId;
+        this.loginService.setCurrentUser(this.user);
+      }
+    });
   }
 
   public async enterGroup(userInfo: UserInfo): Promise<boolean> {
@@ -76,13 +109,19 @@ export class ConversaService {
     this.hubConnection?.invoke('SendMessage', messageData.groupName, messageData.userName, messageData.content, messageData.type);
   }
 
-  public sendMessagePrivate(message: Message): void {
-    const model: UserInfo = this.userInfo.value;
-    if(!model) {
-      throw "Erro de argumento";
-    }
+  public receivePrivateMessages(): void {
+    this.hubConnection.on('ReceivePrivateMessage', data => {
+      console.warn("Mensagem PRIVADA: ", data);
+    });
+  }
 
-    this.hubConnection?.invoke('SendPrivateMessage', model.userName, message.content, message.type);
+  public sendMessagePrivate(data: any): void {
+    // const model: UserInfo = this.userInfo.value;
+    // if(!model) {
+    //   throw "Erro de argumento";
+    // }
+
+    this.hubConnection?.invoke('SendPrivateMessage', data.userName, data.toUserId, data.content, data.type);
   }
 
   public leaveGroup(): Promise<boolean | undefined> | undefined {

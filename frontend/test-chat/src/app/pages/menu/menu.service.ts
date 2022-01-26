@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+
 import { UserInfo } from 'src/app/models/user-info';
+
 import { LoginService } from '../login/login.service';
 
 @Injectable({
@@ -9,7 +11,7 @@ export class MenuService {
   private groups: any[] = [];
 
   constructor(
-    private loginService: LoginService
+    private loginService: LoginService,
   ) {
     this.setGroups();
   }
