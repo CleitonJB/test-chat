@@ -92,7 +92,7 @@ export class ConversaService {
   } 
 
   public receiveMessages(): void {
-    this.hubConnection?.on('ReceiveMessages', data => {
+    this.hubConnection.on('ReceiveMessages', data => {
       console.log("Nova mensagem (Evento): ", data);
       var messages = this.message.value;
       messages.push(data);
@@ -106,12 +106,13 @@ export class ConversaService {
     //   throw "Erro de argumento";
     // }
 
-    this.hubConnection?.invoke('SendMessage', messageData.groupName, messageData.userName, messageData.content, messageData.type);
+    this.hubConnection.invoke('SendMessage', messageData.groupName, messageData.userName, messageData.content, messageData.type);
   }
 
   public receivePrivateMessages(): void {
     this.hubConnection.on('ReceivePrivateMessage', data => {
       console.warn("Mensagem PRIVADA: ", data);
+      alert(`${data.userName}: ${data.content}`);
     });
   }
 
@@ -121,36 +122,36 @@ export class ConversaService {
     //   throw "Erro de argumento";
     // }
 
-    this.hubConnection?.invoke('SendPrivateMessage', data.userName, data.toUserId, data.content, data.type);
+    this.hubConnection.invoke('SendPrivateMessage', data.userName, data.toUserId, data.content, data.type);
   }
 
-  public leaveGroup(): Promise<boolean | undefined> | undefined {
+  public leaveGroup(): Promise<boolean> | undefined {
     try {
       const model: UserInfo = this.userInfo.value;
 
-      if(this.hubConnection?.state == signalr.HubConnectionState.Disconnected) {
+      if(this.hubConnection.state == signalr.HubConnectionState.Disconnected) {
         return this.hubConnection.start().then(
           () => {
             this.resetChat();
             this.userInfo.next(new UserInfo('', ''));
-            return this.hubConnection?.invoke('LeaveGroup', model.groupName, model.userName);
+            return this.hubConnection.invoke('LeaveGroup', model.groupName, model.userName);
           }
         );
       }
 
       this.resetChat();
       this.userInfo.next(new UserInfo('', ''));
-      return this.hubConnection?.invoke('LeaveGroup', model.groupName, model.userName);
+      return this.hubConnection.invoke('LeaveGroup', model.groupName, model.userName);
     } catch (error) {
       throw error;
     } finally {
-      this.hubConnection?.stop();
+      this.hubConnection.stop();
     }
   }
 
   private resetChat(): void {
     if(this.userInfo.value) {
-      this.hubConnection?.off('ReceiveMessages')
+      this.hubConnection.off('ReceiveMessages')
     }
 
     this.message.next([]);

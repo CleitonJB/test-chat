@@ -59,7 +59,7 @@ export class MenuComponent implements OnInit {
   }
 
   public sendPrivateMessage(): void {
-    this.conversaService.getUserInfo().subscribe(
+    this.loginService.getCurrentUser().subscribe(
       (userInfo: UserInfo) => {
         this.privateMessageForm.controls['userName'].setValue(userInfo.userName);
 
