@@ -53,8 +53,11 @@ export class ConversaService {
     return this.$messages;
   }
   //!
-  public setUserConnection(): void {
-    this.hubConnection.start();
+  public setUserConnection(): Promise<void> {
+    return this.hubConnection.start()
+      .catch(error => {
+        console.error(error)
+      });
     // this.hubConnection.start().then(
     //   async () => {
     //     await this.hubConnection.invoke('SetUserConnection').then(data => {

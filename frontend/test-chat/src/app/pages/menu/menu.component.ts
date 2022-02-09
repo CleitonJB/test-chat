@@ -30,11 +30,12 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.conversaService.setUserConnection();
-    this.getGroups();
     this.setInitialForm();
-    this.getPrivateMessages();
-    this.getNotifications();
+    this.conversaService.setUserConnection().then(() => {
+      this.getNotifications();
+      this.getGroups();
+      this.getPrivateMessages();
+    });
   }
 
   private getPrivateMessages(): void {
